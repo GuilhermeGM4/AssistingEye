@@ -5,24 +5,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.widget.Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/selectImageBt"
+        style="@style/HighContrastButton"
         android:text="Selecionar  imagem"
-        android:textSize="40dp"
-        android:textColor="@color/yellow"
-        android:background="@drawable/rectangular_button_background"
-        android:backgroundTint="@null"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <android.widget.Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/backBt"
+        style="@style/HighContrastButton"
         android:text="Voltar"
-        android:textSize="40dp"
-        android:textColor="@color/yellow"
-        android:background="@drawable/rectangular_button_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

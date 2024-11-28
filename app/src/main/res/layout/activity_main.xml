@@ -9,24 +9,17 @@
     tools:context=".ui.MainActivity">
 
     <android.widget.Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/startDetectionBt"
+        style="@style/HighContrastButton"
         android:text="Iniciar detecção"
-        android:textSize="40dp"
-        android:textColor="@color/yellow"
-        android:background="@drawable/rectangular_button_background"
-        android:backgroundTint="@null"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <android.widget.Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/optionsBt"
+        style="@style/HighContrastButton"
         android:text="Opções"
-        android:textSize="40dp"
-        android:textColor="@color/yellow"
-        android:background="@drawable/rectangular_button_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
