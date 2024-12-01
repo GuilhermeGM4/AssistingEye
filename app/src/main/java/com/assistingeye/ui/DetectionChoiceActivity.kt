@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -12,9 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import com.assistingeye.databinding.ActivityDetectionChoiceBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.image.TensorImage
-import org.tensorflow.lite.support.image.ops.ResizeOp
 import org.tensorflow.lite.task.core.BaseOptions
 import org.tensorflow.lite.task.vision.detector.Detection
 import org.tensorflow.lite.task.vision.detector.ObjectDetector
@@ -60,18 +59,30 @@ class DetectionChoiceActivity: AppCompatActivity() {
         adcb.selectImageBt.setOnClickListener{
             selectImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
+
+        adcb.backBt.setOnClickListener{
+            finish()
+        }
     }
 
     private fun runObjectDetection(bitmap: Bitmap){
         Log.d("runObjectDetection", "Object detection started")
         val image = TensorImage.fromBitmap(bitmap)
 
+        val objectET: EditText = adcb.objectET
+        val selectImageBt = adcb.selectImageBt
+
+        val objectName: String = objectET.text.toString()
+
+        objectET.isEnabled = false
+        selectImageBt.isEnabled = false
+
         val options = ObjectDetector.ObjectDetectorOptions.builder()
             .setBaseOptions(BaseOptions.builder().build())
             .setMaxResults(10)
             .setScoreThreshold(0.3f)
             .build()
-        Log.i("runObjectDetection", "Options generated.")
+        Log.d("runObjectDetection", "Options generated.")
         val detector = ObjectDetector.createFromFileAndOptions(
             this,
             "2.tflite",
@@ -81,6 +92,23 @@ class DetectionChoiceActivity: AppCompatActivity() {
 
         val results: List<Detection> = detector.detect(image)
         debugPrint(results)
+
+        if(objectName != ""){
+            drawResult(objectName.lowercase(), results)
+        }
+
+        objectET.isEnabled = true
+        selectImageBt.isEnabled = true
+    }
+
+    private fun drawResult(objectName: String, results: List<Detection>){
+        for((i, obj) in results.withIndex()) {
+            for((j, category) in obj.categories.withIndex()){
+                if(category.label == objectName && category.score >= MIN_CONFIDENCE_ACCEPTANCE) {
+                    adcb.resultTextTV.text = "O objeto $objectName foi encontrado nessa imagem com ${category.score.times(100)} de certeza."
+                }
+            }
+        }
     }
 
     private fun debugPrint(results : List<Detection>) {

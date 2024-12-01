@@ -11,6 +11,7 @@
         <item name="android:textSize">40sp</item>
         <item name="android:textColor">@color/yellow</item>
         <item name="android:background">@drawable/rectangular_button_background</item>
+        <item name="android:layout_margin">5dp</item>
     </style>
 
     <style name="Theme.AssistingEye" parent="Base.Theme.AssistingEye" />
