@@ -102,13 +102,28 @@ class DetectionChoiceActivity: AppCompatActivity() {
     }
 
     private fun drawResult(objectName: String, results: List<Detection>){
+        var resultList: ArrayList<List<String>> = arrayListOf()
         for((i, obj) in results.withIndex()) {
             for((j, category) in obj.categories.withIndex()){
                 if(category.label == objectName && category.score >= MIN_CONFIDENCE_ACCEPTANCE) {
-                    adcb.resultTextTV.text = "O objeto $objectName foi encontrado nessa imagem com ${category.score.times(100)} de certeza."
+                    val objectData: List<String> = listOf(
+                        category.label,
+                        category.score.times(100).toString()
+                    )
+                    resultList.add(objectData)
                 }
             }
         }
+        adcb.resultTextTV.text = "Foi encontrado um total de ${resultList.size} ${objectName} na imagem. " +
+                "A média de acertividade foi de ${calculateScoreAverage(resultList)}"
+    }
+
+    private fun calculateScoreAverage(results: ArrayList<List<String>>): Float{
+        var totalScore = 0.0f
+        for(result in results){
+            totalScore += result[1].toFloat()
+        }
+        return totalScore / results.size
     }
 
     private fun debugPrint(results : List<Detection>) {
