@@ -21,6 +21,8 @@ class OptionsActivity: AppCompatActivity() {
 
         populateSpinner()
 
+        setLanguage()
+
         aob.backBt.setOnClickListener {
             finish()
         }
@@ -40,12 +42,9 @@ class OptionsActivity: AppCompatActivity() {
     }
 
     private fun checkAppLanguage(){
-        Locale.getDefault().language.also { language ->
-            Log.d("Language", language)
-            when(language){
-                "pt" -> aob.languageSp.setSelection(0)
-                "en" -> aob.languageSp.setSelection(1)
-            }
+        when(resources.configuration.locales.get(0).language){
+            "pt" -> aob.languageSp.setSelection(0)
+            "en" -> aob.languageSp.setSelection(1)
         }
     }
 
@@ -71,4 +70,15 @@ class OptionsActivity: AppCompatActivity() {
         recreate()
     }
 
+    private fun setLanguage(){
+        val locale = getSharedPreferences("AssistingEye", MODE_PRIVATE).let { sharedPreferences ->
+            val language = sharedPreferences.getString("language", "pt")
+            Locale(language)
+        }
+        Locale.setDefault(locale)
+        val config = resources.configuration
+        config.setLocale(locale)
+        resources.updateConfiguration(config, resources.displayMetrics)
+
+    }
 }

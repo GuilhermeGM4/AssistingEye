@@ -28,7 +28,7 @@
     <android.widget.Button
         android:id="@+id/saveBt"
         style="@style/HighContrastButton"
-        android:text="Salvar"
+        android:text="@string/action_save"
         app:layout_constraintBottom_toTopOf="@+id/backBt"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
