@@ -11,7 +11,7 @@
     <android.widget.Button
         android:id="@+id/startDetectionBt"
         style="@style/HighContrastButton"
-        android:text="Iniciar detecção"
+        android:text="@string/action_start_detection"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -19,7 +19,7 @@
     <android.widget.Button
         android:id="@+id/optionsBt"
         style="@style/HighContrastButton"
-        android:text="Opções"
+        android:text="@string/action_options"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
