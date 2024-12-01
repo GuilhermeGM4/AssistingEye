@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">AssistingEye</string>
+    <string name="app_name" translatable="false">AssistingEye</string>
+    <string name="action_back">Voltar</string>
+    <string name="action_options">Opções</string>
+    <string name="action_start_detection">Iniciar Detecção</string>
+    <string name="action_select_image">Selecionar Imagem</string>
 </resources>
