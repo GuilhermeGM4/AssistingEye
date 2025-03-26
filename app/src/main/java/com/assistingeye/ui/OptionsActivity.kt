@@ -1,6 +1,8 @@
 package com.assistingeye.ui
 
 import android.R
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -8,6 +10,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import com.assistingeye.databinding.ActivityOptionsBinding
+import com.assistingeye.model.Constants.EXTRA_LANGUAGE_CHANGED
 import java.util.Locale
 
 class OptionsActivity: AppCompatActivity() {
@@ -24,6 +27,10 @@ class OptionsActivity: AppCompatActivity() {
         setLanguage()
 
         aob.backBt.setOnClickListener {
+            Intent().apply {
+                putExtra(EXTRA_LANGUAGE_CHANGED, true)
+                setResult(Activity.RESULT_OK, this)
+            }
             finish()
         }
 
