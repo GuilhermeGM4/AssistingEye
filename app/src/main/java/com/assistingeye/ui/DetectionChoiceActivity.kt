@@ -34,17 +34,25 @@ class DetectionChoiceActivity: AppCompatActivity() {
         if(uri != null){
             Toast.makeText(this, "Imagem selecionada", Toast.LENGTH_SHORT).show()
             lifecycleScope.launch(Dispatchers.IO) {
-                val bitmap = contentResolver.openInputStream(uri)?.use { inputStream ->
-                    BitmapFactory.decodeStream(inputStream)
-                }
-
-                if (bitmap != null) {
+                Thread {
                     runOnUiThread {
-                        runObjectDetection(bitmap)
+                        val bitmap = contentResolver.openInputStream(uri)?.use { inputStream ->
+                            BitmapFactory.decodeStream(inputStream)
+                        }
+
+                        if (bitmap != null) {
+                            runOnUiThread {
+                                runObjectDetection(bitmap)
+                            }
+                        } else {
+                            Toast.makeText(
+                                this@DetectionChoiceActivity,
+                                "Falha ao carregar a imagem",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
-                } else {
-                    Toast.makeText(this@DetectionChoiceActivity, "Falha ao carregar a imagem", Toast.LENGTH_SHORT).show()
-                }
+                }.start()
             }
         }
         else{
@@ -92,6 +100,7 @@ class DetectionChoiceActivity: AppCompatActivity() {
 
         val results: List<Detection> = detector.detect(image)
         debugPrint(results)
+        debugCheckPositioning(results)
 
         if(objectName != ""){
             drawResult(objectName.lowercase(), results)
@@ -114,8 +123,19 @@ class DetectionChoiceActivity: AppCompatActivity() {
                 }
             }
         }
-        adcb.resultTextTV.text = "Foi encontrado um total de ${resultList.size} ${objectName} na imagem. " +
-                "A média de acertividade foi de ${calculateScoreAverage(resultList)}"
+        if (resultList.size > 1) {
+            adcb.resultTextTV.text =
+                "Foi encontrado um total de ${resultList.size} ${objectName} na imagem. " +
+                        "A média de acertividade foi de ${calculateScoreAverage(resultList)}"
+            return
+        }
+        if (resultList.size == 1){
+            adcb.resultTextTV.text =
+                "Foi encontrado um ${objectName} na imagem com uma acertividade de ${resultList[0][1]}"
+            return
+        }
+        adcb.resultTextTV.text = "Nenhum ${objectName} foi encontrado na imagem"
+        return
     }
 
     private fun calculateScoreAverage(results: ArrayList<List<String>>): Float{
@@ -124,6 +144,42 @@ class DetectionChoiceActivity: AppCompatActivity() {
             totalScore += result[1].toFloat()
         }
         return totalScore / results.size
+    }
+
+    private fun debugCheckPositioning(results: List<Detection>){
+        for((i, obj) in results.withIndex()){
+            if(i == results.size - 1){
+                break
+            }
+            val box = obj.boundingBox
+            val nextBox = results[i + 1].boundingBox
+            val nextElement = results[i+1].categories[0]
+
+            for((j, category) in obj.categories.withIndex()){
+                if(nextBox.left > box.right){
+                    if(nextBox.right < box.right){
+                        Log.d(TAG, "Object $i ${nextElement.label} is to the left of ${category.label}")
+                    }
+                    if(nextBox.right > box.right){
+                        Log.d(TAG, "Object $i ${nextElement.label} is to the right of ${category.label}")
+                    }
+                }
+                if (nextBox.right < box.left){
+                    if(nextBox.left > box.left){
+                        Log.d(TAG, "Object $i ${nextElement.label} is to the right of ${category.label}")
+                    }
+                    if(nextBox.left < box.left){
+                        Log.d(TAG, "Object $i ${nextElement.label} is to the left of ${category.label}")
+                    }
+                }
+                if (nextBox.top > box.bottom){
+                    Log.d(TAG, "Object $i ${nextElement.label} is below of ${category.label}")
+                }
+                if (nextBox.bottom < box.top){
+                    Log.d(TAG, "Object $i ${nextElement.label} is above of ${category.label}")
+                }
+            }
+        }
     }
 
     private fun debugPrint(results : List<Detection>) {
