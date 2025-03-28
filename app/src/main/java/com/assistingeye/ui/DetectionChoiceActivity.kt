@@ -11,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.assistingeye.databinding.ActivityDetectionChoiceBinding
+import com.assistingeye.model.DetectedObjectData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.tensorflow.lite.support.image.TensorImage
@@ -111,41 +112,51 @@ class DetectionChoiceActivity: AppCompatActivity() {
     }
 
     private fun drawResult(objectName: String, results: List<Detection>){
-        var resultList: ArrayList<List<String>> = arrayListOf()
+        val allObjectList: ArrayList<DetectedObjectData> = arrayListOf()
+        val requestedObjectList: ArrayList<DetectedObjectData> = arrayListOf()
         for((i, obj) in results.withIndex()) {
             for((j, category) in obj.categories.withIndex()){
                 if(category.label == objectName && category.score >= MIN_CONFIDENCE_ACCEPTANCE) {
-                    val objectData: List<String> = listOf(
-                        category.label,
-                        category.score.times(100).toString()
+                    requestedObjectList.add(
+                        DetectedObjectData(
+                        category.score * 100,
+                        obj.boundingBox,
+                        category.label
                     )
-                    resultList.add(objectData)
+                    )
+                    allObjectList.add(
+                        DetectedObjectData(
+                        category.score * 100,
+                        obj.boundingBox,
+                        category.label
+                    )
+                    )
                 }
             }
         }
-        if (resultList.size > 1) {
+        if (requestedObjectList.size > 1) {
             adcb.resultTextTV.text =
-                "Foi encontrado um total de ${resultList.size} ${objectName} na imagem. " +
-                        "A média de acertividade foi de ${calculateScoreAverage(resultList)}"
+                "Foi encontrado um total de ${requestedObjectList.size} ${objectName} na imagem. " +
+                        "A média de acertividade foi de ${calculateScoreAverage(requestedObjectList)}"
             return
         }
-        if (resultList.size == 1){
+        if (requestedObjectList.size == 1){
             adcb.resultTextTV.text =
-                "Foi encontrado um ${objectName} na imagem com uma acertividade de ${resultList[0][1]}"
+                "Foi encontrado um ${objectName} na imagem com uma acertividade de ${requestedObjectList[0].confidence}"
             return
         }
         adcb.resultTextTV.text = "Nenhum ${objectName} foi encontrado na imagem"
         return
     }
 
-    private fun calculateScoreAverage(results: ArrayList<List<String>>): Float{
+    private fun calculateScoreAverage(results: ArrayList<DetectedObjectData>): Float{
         var totalScore = 0.0f
         for(result in results){
-            totalScore += result[1].toFloat()
+            totalScore += result.confidence
         }
         return totalScore / results.size
     }
-
+    
     private fun debugCheckPositioning(results: List<Detection>){
         for((i, obj) in results.withIndex()){
             if(i == results.size - 1){
