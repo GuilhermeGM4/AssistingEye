@@ -122,16 +122,16 @@ class DetectionChoiceActivity: AppCompatActivity() {
                         category.score * 100,
                         obj.boundingBox,
                         category.label
+                        )
                     )
-                    )
-                    allObjectList.add(
-                        DetectedObjectData(
+                }
+                allObjectList.add(
+                    DetectedObjectData(
                         category.score * 100,
                         obj.boundingBox,
                         category.label
                     )
-                    )
-                }
+                )
             }
         }
         if (requestedObjectList.size > 1) {
@@ -142,7 +142,8 @@ class DetectionChoiceActivity: AppCompatActivity() {
         }
         if (requestedObjectList.size == 1){
             adcb.resultTextTV.text =
-                "Foi encontrado um ${objectName} na imagem com uma acertividade de ${requestedObjectList[0].confidence}"
+                "Foi encontrado um ${objectName} na imagem com uma acertividade de ${requestedObjectList[0].confidence}\n" +
+                        "${makePositioningMessage(allObjectList, requestedObjectList[0])}"
             return
         }
         adcb.resultTextTV.text = "Nenhum ${objectName} foi encontrado na imagem"
@@ -156,7 +157,40 @@ class DetectionChoiceActivity: AppCompatActivity() {
         }
         return totalScore / results.size
     }
-    
+
+    private fun makePositioningMessage(objectList: ArrayList<DetectedObjectData>, requestedObject: DetectedObjectData): String{
+        var message = ""
+        for(obj in objectList){
+            message += "O objeto ${obj.name} está"
+            Log.d("makePositioningMessage", "Object list: $objectList")
+            if(obj.name != requestedObject.name){
+                if(obj.boundingBox.left > requestedObject.boundingBox.right || (
+                    obj.boundingBox.left < requestedObject.boundingBox.right &&
+                    obj.boundingBox.right > requestedObject.boundingBox.right
+                ))
+                        message += " a direita"
+                else if (obj.boundingBox.right < requestedObject.boundingBox.left || (
+                    obj.boundingBox.right > requestedObject.boundingBox.left &&
+                    obj.boundingBox.left < requestedObject.boundingBox.left
+                ))
+                    message += " a esquerda"
+
+                if (obj.boundingBox.top > requestedObject.boundingBox.bottom || (
+                        obj.boundingBox.top < requestedObject.boundingBox.bottom &&
+                        obj.boundingBox.bottom > requestedObject.boundingBox.bottom
+                ))
+                    message += " abaixo"
+                if (obj.boundingBox.bottom < requestedObject.boundingBox.top || (
+                    obj.boundingBox.bottom > requestedObject.boundingBox.top &&
+                    obj.boundingBox.top < requestedObject.boundingBox.top
+                ))
+                    message += " acima"
+            }
+            message += " do objeto ${requestedObject.name} \n"
+        }
+        return message
+    }
+
     private fun debugCheckPositioning(results: List<Detection>){
         for((i, obj) in results.withIndex()){
             if(i == results.size - 1){
