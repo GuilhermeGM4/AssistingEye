@@ -28,9 +28,15 @@ class RequiredObjectAdapter(
                 parent,
                 false
             )
-        }
 
-        objectTile = tdo.root
+            objectTile = tdo.root
+
+            val newObjectTileHolder = ObjectTileHolder(
+                tdo.nameTV
+            )
+
+            objectTile.tag = newObjectTileHolder
+        }
 
         val holder = objectTile.tag as ObjectTileHolder
         holder.let {
