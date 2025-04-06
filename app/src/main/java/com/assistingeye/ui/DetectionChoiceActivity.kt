@@ -1,5 +1,6 @@
 package com.assistingeye.ui
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -135,9 +136,15 @@ class DetectionChoiceActivity: AppCompatActivity() {
             }
         }
         if (requestedObjectList.size > 1) {
-            adcb.resultTextTV.text =
-                "Foi encontrado um total de ${requestedObjectList.size} ${objectName} na imagem. " +
-                        "A média de acertividade foi de ${calculateScoreAverage(requestedObjectList)}"
+            Intent(this, MultipleDetectedActivity::class.java).apply {
+                putParcelableArrayListExtra("REQUIRED_OBJECT", requestedObjectList)
+                putParcelableArrayListExtra("ALL_OBJECTS", allObjectList)
+                startActivity(this)
+            }
+
+//            adcb.resultTextTV.text =
+//                "Foi encontrado um total de ${requestedObjectList.size} ${objectName} na imagem. " +
+//                        "A média de acertividade foi de ${calculateScoreAverage(requestedObjectList)}"
             return
         }
         if (requestedObjectList.size == 1){
