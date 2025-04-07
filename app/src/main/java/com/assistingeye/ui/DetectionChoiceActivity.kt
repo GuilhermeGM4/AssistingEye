@@ -148,9 +148,14 @@ class DetectionChoiceActivity: AppCompatActivity() {
             return
         }
         if (requestedObjectList.size == 1){
-            adcb.resultTextTV.text =
-                "Foi encontrado um ${objectName} na imagem com uma acertividade de ${requestedObjectList[0].confidence}\n" +
-                        "${makePositioningMessage(allObjectList, requestedObjectList[0])}"
+            Intent(this, DetectionResultActivity::class.java).apply {
+                putExtra("REQUIRED_OBJECT", requestedObjectList[0])
+                putParcelableArrayListExtra("ALL_OBJECTS", allObjectList)
+                startActivity(this)
+            }
+//            adcb.resultTextTV.text =
+//                "Foi encontrado um ${objectName} na imagem com uma acertividade de ${requestedObjectList[0].confidence}\n" +
+//                        "${makePositioningMessage(allObjectList, requestedObjectList[0])}"
             return
         }
         adcb.resultTextTV.text = "Nenhum ${objectName} foi encontrado na imagem"
