@@ -32,13 +32,13 @@ class MultipleDetectedActivity : AppCompatActivity() {
 
         amd.objectLV.adapter = objectAdapter
 
-//        TODO Create activity to display the required object and make the following code send to it
-//        amd.objectLV.setOnItemClickListener{ _, _, position, _ ->
-//            Intent(this, nextActivity).apply {
-//                putExtra("REQUIRED_OBJECT", requiredObjectsMutableList[position])
-//                startActivity(this)
-//            }
-//        }
+        amd.objectLV.setOnItemClickListener{ _, _, position, _ ->
+            Intent(this, DetectionResultActivity::class.java).apply {
+                putExtra("REQUIRED_OBJECT", requiredObjectList[position])
+                putParcelableArrayListExtra("ALL_OBJECTS", detectedObjectsList)
+                startActivity(this)
+            }
+        }
 
         amd.backBt.setOnClickListener {
             finish()
