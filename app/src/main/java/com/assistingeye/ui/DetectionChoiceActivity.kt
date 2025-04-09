@@ -105,14 +105,14 @@ class DetectionChoiceActivity: AppCompatActivity() {
         debugCheckPositioning(results)
 
         if(objectName != ""){
-            drawResult(objectName.lowercase(), results)
+            drawResult(objectName.lowercase(), results, bitmap.width, bitmap.height)
         }
 
         objectET.isEnabled = true
         selectImageBt.isEnabled = true
     }
 
-    private fun drawResult(objectName: String, results: List<Detection>){
+    private fun drawResult(objectName: String, results: List<Detection>, imageWidth: Int, imageHeight: Int){
         val allObjectList: ArrayList<DetectedObjectData> = arrayListOf()
         val requestedObjectList: ArrayList<DetectedObjectData> = arrayListOf()
         for((i, obj) in results.withIndex()) {
@@ -151,6 +151,8 @@ class DetectionChoiceActivity: AppCompatActivity() {
             Intent(this, DetectionResultActivity::class.java).apply {
                 putExtra("REQUIRED_OBJECT", requestedObjectList[0])
                 putParcelableArrayListExtra("ALL_OBJECTS", allObjectList)
+                putExtra("IMAGE_WIDTH", imageWidth)
+                putExtra("IMAGE_HEIGHT", imageHeight)
                 startActivity(this)
             }
 //            adcb.resultTextTV.text =

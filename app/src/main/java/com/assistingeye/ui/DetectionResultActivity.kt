@@ -18,6 +18,8 @@ class DetectionResultActivity : AppCompatActivity() {
 
     private lateinit var requiredObject: DetectedObjectData
     private val detectedObjectsList: ArrayList<DetectedObjectData> = arrayListOf()
+    private var imageWidth: Int = 0
+    private var imageHeight: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,12 +53,19 @@ class DetectionResultActivity : AppCompatActivity() {
                 detectedObjectsList.addAll(it)
             }
         }
+        imageWidth = intent.getIntExtra("IMAGE_WIDTH", 0)
+        imageHeight = intent.getIntExtra("IMAGE_HEIGHT", 0)
     }
 
     private fun makePositioningMessage(objectList: ArrayList<DetectedObjectData>, requestedObject: DetectedObjectData): String{
         var message = ""
+
+        message += "Tenho ${requestedObject.confidence} de certeza que este item é um ${requestedObject.name}. "
+
+        message += positionOnImage(requestedObject)
+
         for(obj in objectList){
-            message += "O objeto ${obj.name} está"
+            message += "/nO objeto ${obj.name} está"
             Log.d("makePositioningMessage", "Object list: $objectList")
             if(obj.name != requestedObject.name){
                 if(obj.boundingBox.left > requestedObject.boundingBox.right || (
@@ -83,6 +92,42 @@ class DetectionResultActivity : AppCompatActivity() {
             }
             message += " do objeto ${requestedObject.name} \n"
         }
+
         return message
+    }
+
+    private fun positionOnImage(obj: DetectedObjectData): String{
+        val imageCenterX: Float = imageWidth / 2f
+        val imageCenterY: Float = imageHeight / 2f
+        debugCoordinates(imageCenterX, imageCenterY, obj)
+
+        var message: String = "O objeto está"
+
+        if(obj.boundingBox.left < imageCenterX && obj.boundingBox.right > imageCenterX &&
+            obj.boundingBox.top > imageCenterY && obj.boundingBox.bottom < imageCenterY)
+            return " no centro da imagem"
+        if(obj.boundingBox.right > imageCenterX)
+            message += " a direita"
+        if(obj.boundingBox.left < imageCenterX)
+            message += " a esquerda"
+        if(obj.boundingBox.top > imageCenterY)
+            message += " abaixo"
+        if(obj.boundingBox.bottom < imageCenterY)
+            message += " acima"
+        message += " da imagem."
+        return message
+    }
+
+    private fun debugCoordinates(imageCenterX: Float, imageCenterY: Float, obj: DetectedObjectData){
+        Log.d("debugCoordinates", "Image Width $imageWidth")
+        Log.d("debugCoordinates", "Image Height $imageHeight")
+        Log.d("debugCoordinates", "Image center: ($imageCenterX, $imageCenterY)")
+        Log.d("debugCoordinates", "Object center: (${obj.boundingBox.centerX()}, ${obj.boundingBox.centerY()})")
+        Log.d("debugCoordinates", "Object left: ${obj.boundingBox.left}")
+        Log.d("debugCoordinates", "Object right: ${obj.boundingBox.right}")
+        Log.d("debugCoordinates", "Object top: ${obj.boundingBox.top}")
+        Log.d("debugCoordinates", "Object bottom: ${obj.boundingBox.bottom}")
+        Log.d("debugCoordinates", "Object width: ${obj.boundingBox.width()}")
+        Log.d("debugCoordinates", "Object height: ${obj.boundingBox.height()}")
     }
 }
