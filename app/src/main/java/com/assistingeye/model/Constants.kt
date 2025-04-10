@@ -1,0 +1,11 @@
+package com.assistingeye.model
+
+object Constants {
+    const val EXTRA_LANGUAGE_CHANGED = "LANGUAGE_CHANGED"
+    const val EXTRA_REQUIRED_OBJECT_LIST = "REQUIRED_OBJECT_LIST"
+    const val EXTRA_REQUIRED_OBJECT = "REQUIRED_OBJECT"
+    const val EXTRA_ALL_OBJECTS_LIST = "ALL_OBJECTS_LIST"
+    const val EXTRA_IMAGE_WIDTH = "IMAGE_WIDTH"
+    const val EXTRA_IMAGE_HEIGHT = "IMAGE_HEIGHT"
+
+}
