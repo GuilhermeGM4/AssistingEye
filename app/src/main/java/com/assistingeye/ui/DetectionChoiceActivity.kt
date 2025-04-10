@@ -12,6 +12,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.assistingeye.databinding.ActivityDetectionChoiceBinding
+import com.assistingeye.model.Constants.EXTRA_ALL_OBJECTS_LIST
+import com.assistingeye.model.Constants.EXTRA_IMAGE_HEIGHT
+import com.assistingeye.model.Constants.EXTRA_IMAGE_WIDTH
+import com.assistingeye.model.Constants.EXTRA_REQUIRED_OBJECT
+import com.assistingeye.model.Constants.EXTRA_REQUIRED_OBJECT_LIST
 import com.assistingeye.model.DetectedObjectData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -137,8 +142,8 @@ class DetectionChoiceActivity: AppCompatActivity() {
         }
         if (requestedObjectList.size > 1) {
             Intent(this, MultipleDetectedActivity::class.java).apply {
-                putParcelableArrayListExtra("REQUIRED_OBJECT", requestedObjectList)
-                putParcelableArrayListExtra("ALL_OBJECTS", allObjectList)
+                putParcelableArrayListExtra(EXTRA_REQUIRED_OBJECT_LIST, requestedObjectList)
+                putParcelableArrayListExtra(EXTRA_ALL_OBJECTS_LIST, allObjectList)
                 startActivity(this)
             }
 
@@ -149,10 +154,10 @@ class DetectionChoiceActivity: AppCompatActivity() {
         }
         if (requestedObjectList.size == 1){
             Intent(this, DetectionResultActivity::class.java).apply {
-                putExtra("REQUIRED_OBJECT", requestedObjectList[0])
-                putParcelableArrayListExtra("ALL_OBJECTS", allObjectList)
-                putExtra("IMAGE_WIDTH", imageWidth)
-                putExtra("IMAGE_HEIGHT", imageHeight)
+                putExtra(EXTRA_REQUIRED_OBJECT, requestedObjectList[0])
+                putParcelableArrayListExtra(EXTRA_ALL_OBJECTS_LIST, allObjectList)
+                putExtra(EXTRA_IMAGE_WIDTH, imageWidth)
+                putExtra(EXTRA_IMAGE_HEIGHT, imageHeight)
                 startActivity(this)
             }
 //            adcb.resultTextTV.text =

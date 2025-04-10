@@ -9,6 +9,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.assistingeye.R
 import com.assistingeye.databinding.ActivityDetectionResultBinding
+import com.assistingeye.model.Constants.EXTRA_ALL_OBJECTS_LIST
+import com.assistingeye.model.Constants.EXTRA_IMAGE_HEIGHT
+import com.assistingeye.model.Constants.EXTRA_IMAGE_WIDTH
+import com.assistingeye.model.Constants.EXTRA_REQUIRED_OBJECT
 import com.assistingeye.model.DetectedObjectData
 
 class DetectionResultActivity : AppCompatActivity() {
@@ -36,25 +40,25 @@ class DetectionResultActivity : AppCompatActivity() {
 
     private fun receiveExtras(){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra("REQUIRED_OBJECT", DetectedObjectData::class.java)?.let {
+            intent.getParcelableExtra(EXTRA_REQUIRED_OBJECT, DetectedObjectData::class.java)?.let {
                 requiredObject = it
             }
-            intent.getParcelableArrayListExtra("ALL_OBJECTS", DetectedObjectData::class.java)?.let {
+            intent.getParcelableArrayListExtra(EXTRA_ALL_OBJECTS_LIST, DetectedObjectData::class.java)?.let {
                 detectedObjectsList.addAll(it)
             }
         }
         else{
             @Suppress("DEPRECATION")
-            intent.getParcelableExtra<DetectedObjectData>("REQUIRED_OBJECT")?.let {
+            intent.getParcelableExtra<DetectedObjectData>(EXTRA_REQUIRED_OBJECT)?.let {
                 requiredObject = it
             }
             @Suppress("DEPRECATION")
-            intent.getParcelableArrayListExtra<DetectedObjectData>("ALL_OBJECTS")?.let {
+            intent.getParcelableArrayListExtra<DetectedObjectData>(EXTRA_ALL_OBJECTS_LIST)?.let {
                 detectedObjectsList.addAll(it)
             }
         }
-        imageWidth = intent.getIntExtra("IMAGE_WIDTH", 0)
-        imageHeight = intent.getIntExtra("IMAGE_HEIGHT", 0)
+        imageWidth = intent.getIntExtra(EXTRA_IMAGE_WIDTH, 0)
+        imageHeight = intent.getIntExtra(EXTRA_IMAGE_HEIGHT, 0)
     }
 
     private fun makePositioningMessage(objectList: ArrayList<DetectedObjectData>, requestedObject: DetectedObjectData): String{
