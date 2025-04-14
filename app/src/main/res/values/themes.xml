@@ -14,5 +14,14 @@
         <item name="android:layout_margin">5dp</item>
     </style>
 
+    <style name="HighContrastText" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:textSize">40sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:background">@color/green</item>
+        <item name="android:layout_margin">5dp</item>
+    </style>
+
     <style name="Theme.AssistingEye" parent="Base.Theme.AssistingEye" />
 </resources>
