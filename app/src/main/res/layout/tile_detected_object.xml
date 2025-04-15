@@ -3,14 +3,25 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="20dp"
-    android:orientation="vertical"
-    android:background="@color/black">
+    android:orientation="horizontal"
+    android:background="@color/green">
+
+    <TextView
+        android:id="@+id/numberTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Number"
+        android:textStyle="bold"
+        android:textSize="30dp"
+        android:textColor="@color/black"
+        android:layout_marginRight="10dp" />
 
     <TextView
         android:id="@+id/nameTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Name"
-        android:textSize="25dp"
-        android:textColor="@color/yellow" />
+        android:textStyle="bold"
+        android:textSize="30dp"
+        android:textColor="@color/black" />
 </LinearLayout>

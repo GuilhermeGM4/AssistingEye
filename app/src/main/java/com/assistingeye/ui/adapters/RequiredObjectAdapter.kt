@@ -14,7 +14,7 @@ class RequiredObjectAdapter(
     context: Context,
     private val requiredObjectList: ArrayList<DetectedObjectData>
 ): ArrayAdapter<DetectedObjectData>(context, R.layout.tile_detected_object, requiredObjectList) {
-    private data class ObjectTileHolder(val nameTV: TextView)
+    private data class ObjectTileHolder(val numberTV: TextView, val nameTV: TextView)
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         lateinit var tdo: TileDetectedObjectBinding
@@ -32,6 +32,7 @@ class RequiredObjectAdapter(
             objectTile = tdo.root
 
             val newObjectTileHolder = ObjectTileHolder(
+                tdo.numberTV,
                 tdo.nameTV
             )
 
@@ -41,6 +42,7 @@ class RequiredObjectAdapter(
         val holder = objectTile.tag as ObjectTileHolder
         holder.let {
             with(detectedObject){
+                it.numberTV.text = (position + 1).toString()
                 it.nameTV.text = name
             }
         }
