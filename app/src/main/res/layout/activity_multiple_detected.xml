@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/backBt"/>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/backBt"
         style="@style/HighContrastButton"
         android:text="@string/action_back"
