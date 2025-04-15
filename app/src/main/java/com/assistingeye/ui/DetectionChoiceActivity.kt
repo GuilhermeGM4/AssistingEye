@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.assistingeye.databinding.ActivityDetectionChoiceBinding
 import com.assistingeye.model.Constants.EXTRA_ALL_OBJECTS_LIST
@@ -118,9 +119,7 @@ class DetectionChoiceActivity: AppCompatActivity() {
             debugCheckPositioning(results)
 
             runOnUiThread {
-                if (objectName != "") {
-                    drawResult(objectName.lowercase(), results, bitmap.width, bitmap.height)
-                }
+                drawResult(objectName.lowercase(), results, bitmap.width, bitmap.height)
                 objectET.isEnabled = true
                 selectImageBt.isEnabled = true
             }
@@ -160,6 +159,7 @@ class DetectionChoiceActivity: AppCompatActivity() {
 //            adcb.resultTextTV.text =
 //                "Foi encontrado um total de ${requestedObjectList.size} ${objectName} na imagem. " +
 //                        "A média de acertividade foi de ${calculateScoreAverage(requestedObjectList)}"
+            adcb.resultTextTV.visibility = INVISIBLE
             return
         }
         if (requestedObjectList.size == 1){
@@ -173,6 +173,18 @@ class DetectionChoiceActivity: AppCompatActivity() {
 //            adcb.resultTextTV.text =
 //                "Foi encontrado um ${objectName} na imagem com uma acertividade de ${requestedObjectList[0].confidence}\n" +
 //                        "${makePositioningMessage(allObjectList, requestedObjectList[0])}"
+            adcb.resultTextTV.visibility = INVISIBLE
+            return
+        }
+        if (objectName == ""){
+            Intent(this, MultipleDetectedActivity::class.java).apply {
+                putParcelableArrayListExtra(EXTRA_REQUIRED_OBJECT_LIST, allObjectList)
+                putParcelableArrayListExtra(EXTRA_ALL_OBJECTS_LIST, allObjectList)
+                putExtra(EXTRA_IMAGE_WIDTH, imageWidth)
+                putExtra(EXTRA_IMAGE_HEIGHT, imageHeight)
+                startActivity(this)
+            }
+            adcb.resultTextTV.visibility = INVISIBLE
             return
         }
         showAttentionMessage("Nenhum $objectName foi encontrado na imagem")
