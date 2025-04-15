@@ -5,6 +5,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
@@ -52,6 +54,7 @@ class DetectionChoiceActivity: AppCompatActivity() {
                                 runObjectDetection(bitmap)
                             }
                         } else {
+                            showAttentionMessage("Falha ao carregar a imagem")
                             Toast.makeText(
                                 this@DetectionChoiceActivity,
                                 "Falha ao carregar a imagem",
@@ -63,6 +66,7 @@ class DetectionChoiceActivity: AppCompatActivity() {
             }
         }
         else{
+            showAttentionMessage("Nenhuma imagem selecionada")
             Toast.makeText(this, "Nenhuma imagem selecionada", Toast.LENGTH_SHORT).show()
         }
     }
@@ -72,6 +76,8 @@ class DetectionChoiceActivity: AppCompatActivity() {
         setContentView(adcb.root)
 
         adcb.selectImageBt.setOnClickListener{
+            if(adcb.resultTextTV.visibility != INVISIBLE)
+                adcb.resultTextTV.visibility = INVISIBLE
             selectImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
@@ -91,30 +97,34 @@ class DetectionChoiceActivity: AppCompatActivity() {
 
         objectET.isEnabled = false
         selectImageBt.isEnabled = false
+        showAttentionMessage("Procurando objeto na imagem...")
 
-        val options = ObjectDetector.ObjectDetectorOptions.builder()
-            .setBaseOptions(BaseOptions.builder().build())
-            .setMaxResults(10)
-            .setScoreThreshold(0.3f)
-            .build()
-        Log.d("runObjectDetection", "Options generated.")
-        val detector = ObjectDetector.createFromFileAndOptions(
-            this,
-            "2.tflite",
-            options
-        )
-        Log.i("runObjectDetection", "Detector created.")
+        lifecycleScope.launch(Dispatchers.Default) {
+            val options = ObjectDetector.ObjectDetectorOptions.builder()
+                .setBaseOptions(BaseOptions.builder().build())
+                .setMaxResults(10)
+                .setScoreThreshold(0.3f)
+                .build()
+            Log.d("runObjectDetection", "Options generated.")
+            val detector = ObjectDetector.createFromFileAndOptions(
+                this@DetectionChoiceActivity,
+                "2.tflite",
+                options
+            )
+            Log.i("runObjectDetection", "Detector created.")
 
-        val results: List<Detection> = detector.detect(image)
-        debugPrint(results)
-        debugCheckPositioning(results)
+            val results: List<Detection> = detector.detect(image)
+            debugPrint(results)
+            debugCheckPositioning(results)
 
-        if(objectName != ""){
-            drawResult(objectName.lowercase(), results, bitmap.width, bitmap.height)
+            runOnUiThread {
+                if (objectName != "") {
+                    drawResult(objectName.lowercase(), results, bitmap.width, bitmap.height)
+                }
+                objectET.isEnabled = true
+                selectImageBt.isEnabled = true
+            }
         }
-
-        objectET.isEnabled = true
-        selectImageBt.isEnabled = true
     }
 
     private fun drawResult(objectName: String, results: List<Detection>, imageWidth: Int, imageHeight: Int){
@@ -165,8 +175,15 @@ class DetectionChoiceActivity: AppCompatActivity() {
 //                        "${makePositioningMessage(allObjectList, requestedObjectList[0])}"
             return
         }
-        adcb.resultTextTV.text = "Nenhum ${objectName} foi encontrado na imagem"
+        showAttentionMessage("Nenhum $objectName foi encontrado na imagem")
         return
+    }
+
+    private fun showAttentionMessage(message: String){
+        Log.d("showAttentionMessage", message)
+        if (adcb.resultTextTV.visibility != VISIBLE)
+            adcb.resultTextTV.visibility = VISIBLE
+        adcb.resultTextTV.text = message
     }
 
     private fun calculateScoreAverage(results: ArrayList<DetectedObjectData>): Float{
