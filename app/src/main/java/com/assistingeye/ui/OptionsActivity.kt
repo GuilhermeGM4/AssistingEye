@@ -41,7 +41,9 @@ class OptionsActivity: AppCompatActivity() {
     
     private fun populateSpinner(){
         val languages = arrayOf("Português", "English")
-        val adapter = ArrayAdapter(this, R.layout.simple_spinner_dropdown_item, languages)
+        val adapter = ArrayAdapter(this, com.assistingeye.R.layout.spinner_highcontrast_selected_item, languages)
+        adapter.setDropDownViewResource(com.assistingeye.R.layout.spinner_highcontrast_dropdown_item)
+
         val languageSp = aob.languageSp
         languageSp.adapter = adapter
 

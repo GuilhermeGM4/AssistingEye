@@ -7,11 +7,8 @@
 
     <TextView
         android:id="@+id/languageTV"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/HighContrastText"
         android:text="Idioma"
-        android:textColor="@color/black"
-        android:textSize="40sp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -21,6 +18,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:spinnerMode="dropdown"
+        android:background="@color/green"
+        android:layout_marginTop="5dp"
         app:layout_constraintTop_toBottomOf="@id/languageTV"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
