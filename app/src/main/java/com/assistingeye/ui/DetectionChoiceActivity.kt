@@ -36,8 +36,6 @@ class DetectionChoiceActivity: AppCompatActivity() {
     companion object {
         const val TAG = "TFLite - ODT"
         const val MIN_CONFIDENCE_ACCEPTANCE: Float = 0.5f
-        const val REQUEST_IMAGE_CAPTURE: Int = 1
-        private const val MAX_FONT_SIZE = 96F
     }
 
     private val selectImage = registerForActivityResult(ActivityResultContracts.PickVisualMedia()){ uri ->
@@ -153,12 +151,11 @@ class DetectionChoiceActivity: AppCompatActivity() {
             Intent(this, MultipleDetectedActivity::class.java).apply {
                 putParcelableArrayListExtra(EXTRA_REQUIRED_OBJECT_LIST, requestedObjectList)
                 putParcelableArrayListExtra(EXTRA_ALL_OBJECTS_LIST, allObjectList)
+                putExtra(EXTRA_IMAGE_WIDTH, imageWidth)
+                putExtra(EXTRA_IMAGE_HEIGHT, imageHeight)
                 startActivity(this)
             }
 
-//            adcb.resultTextTV.text =
-//                "Foi encontrado um total de ${requestedObjectList.size} ${objectName} na imagem. " +
-//                        "A média de acertividade foi de ${calculateScoreAverage(requestedObjectList)}"
             adcb.resultTextTV.visibility = INVISIBLE
             return
         }
@@ -170,9 +167,7 @@ class DetectionChoiceActivity: AppCompatActivity() {
                 putExtra(EXTRA_IMAGE_HEIGHT, imageHeight)
                 startActivity(this)
             }
-//            adcb.resultTextTV.text =
-//                "Foi encontrado um ${objectName} na imagem com uma acertividade de ${requestedObjectList[0].confidence}\n" +
-//                        "${makePositioningMessage(allObjectList, requestedObjectList[0])}"
+
             adcb.resultTextTV.visibility = INVISIBLE
             return
         }
@@ -184,6 +179,7 @@ class DetectionChoiceActivity: AppCompatActivity() {
                 putExtra(EXTRA_IMAGE_HEIGHT, imageHeight)
                 startActivity(this)
             }
+
             adcb.resultTextTV.visibility = INVISIBLE
             return
         }
@@ -196,47 +192,6 @@ class DetectionChoiceActivity: AppCompatActivity() {
         if (adcb.resultTextTV.visibility != VISIBLE)
             adcb.resultTextTV.visibility = VISIBLE
         adcb.resultTextTV.text = message
-    }
-
-    private fun calculateScoreAverage(results: ArrayList<DetectedObjectData>): Float{
-        var totalScore = 0.0f
-        for(result in results){
-            totalScore += result.confidence
-        }
-        return totalScore / results.size
-    }
-
-    private fun makePositioningMessage(objectList: ArrayList<DetectedObjectData>, requestedObject: DetectedObjectData): String{
-        var message = ""
-        for(obj in objectList){
-            message += "O objeto ${obj.name} está"
-            Log.d("makePositioningMessage", "Object list: $objectList")
-            if(obj.name != requestedObject.name){
-                if(obj.boundingBox.left > requestedObject.boundingBox.right || (
-                    obj.boundingBox.left < requestedObject.boundingBox.right &&
-                    obj.boundingBox.right > requestedObject.boundingBox.right
-                ))
-                        message += " a direita"
-                else if (obj.boundingBox.right < requestedObject.boundingBox.left || (
-                    obj.boundingBox.right > requestedObject.boundingBox.left &&
-                    obj.boundingBox.left < requestedObject.boundingBox.left
-                ))
-                    message += " a esquerda"
-
-                if (obj.boundingBox.top > requestedObject.boundingBox.bottom || (
-                        obj.boundingBox.top < requestedObject.boundingBox.bottom &&
-                        obj.boundingBox.bottom > requestedObject.boundingBox.bottom
-                ))
-                    message += " abaixo"
-                if (obj.boundingBox.bottom < requestedObject.boundingBox.top || (
-                    obj.boundingBox.bottom > requestedObject.boundingBox.top &&
-                    obj.boundingBox.top < requestedObject.boundingBox.top
-                ))
-                    message += " acima"
-            }
-            message += " do objeto ${requestedObject.name} \n"
-        }
-        return message
     }
 
     private fun debugCheckPositioning(results: List<Detection>){
