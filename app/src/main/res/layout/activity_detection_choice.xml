@@ -4,55 +4,50 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:id="@+id/objectTV"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/imageCL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Nome do objeto"
-        android:textSize="40sp"
-        android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
 
-    <EditText
-        android:id="@+id/objectET"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="30sp"
-        android:textColor="@color/yellow"
-        android:background="@color/black"
-        android:layout_margin="5dp"
-        android:hint="Nome do objeto"
-        android:textColorHint="@color/white"
-        app:layout_constraintTop_toBottomOf="@id/objectTV"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <TextView
+            android:id="@+id/objectTV"
+            style="@style/HighContrastText"
+            android:text="Nome do objeto"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-    <android.widget.Button
-        android:id="@+id/selectImageBt"
-        style="@style/HighContrastButton"
-        android:text="@string/action_select_image"
-        app:layout_constraintTop_toBottomOf="@+id/objectET"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        <EditText
+            android:id="@+id/objectET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:textColor="@color/yellow"
+            android:background="@color/black"
+            android:layout_margin="5dp"
+            android:hint="Nome do objeto"
+            android:textColorHint="@color/white"
+            app:layout_constraintTop_toBottomOf="@id/objectTV"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <TextView
-        android:id="@+id/resultTV"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Resultado:"
-        android:textColor="@color/black"
-        android:textSize="40sp"
-        app:layout_constraintTop_toBottomOf="@+id/selectImageBt"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <android.widget.Button
+            android:id="@+id/selectImageBt"
+            style="@style/HighContrastButton"
+            android:text="@string/action_select_image"
+            app:layout_constraintTop_toBottomOf="@+id/objectET"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/resultTextTV"
         style="@style/HighContrastAttentionText"
         android:visibility="invisible"
-        app:layout_constraintTop_toBottomOf="@+id/resultTV"
+        app:layout_constraintTop_toBottomOf="@id/imageCL"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/backBt"/>
