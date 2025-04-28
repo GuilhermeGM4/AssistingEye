@@ -69,7 +69,7 @@ class DetectionResultActivity : AppCompatActivity() {
         message += positionOnImage(requestedObject)
 
         for(obj in objectList){
-            message += "/nO objeto ${obj.name} está"
+            message += "\nO objeto ${obj.name} está"
             Log.d("makePositioningMessage", "Object list: $objectList")
             if(obj.name != requestedObject.name){
                 if(obj.boundingBox.left > requestedObject.boundingBox.right || (
