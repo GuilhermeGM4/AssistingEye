@@ -42,31 +42,21 @@ class DetectionChoiceActivity: AppCompatActivity() {
         if(uri != null){
             Toast.makeText(this, "Imagem selecionada", Toast.LENGTH_SHORT).show()
             lifecycleScope.launch(Dispatchers.IO) {
-                Thread {
-                    runOnUiThread {
-                        val bitmap = contentResolver.openInputStream(uri)?.use { inputStream ->
-                            BitmapFactory.decodeStream(inputStream)
-                        }
+                val bitmap = contentResolver.openInputStream(uri)?.use { inputStream ->
+                    BitmapFactory.decodeStream(inputStream)
+                }
 
-                        if (bitmap != null) {
-                            runOnUiThread {
-                                runObjectDetection(bitmap)
-                            }
-                        } else {
-                            showAttentionMessage("Falha ao carregar a imagem")
-                            Toast.makeText(
-                                this@DetectionChoiceActivity,
-                                "Falha ao carregar a imagem",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+                runOnUiThread {
+                    if (bitmap != null) {
+                        runObjectDetection(bitmap)
+                    } else {
+                        showAttentionMessage("Falha ao carregar a imagem")
                     }
-                }.start()
+                }
             }
         }
         else{
             showAttentionMessage("Nenhuma imagem selecionada")
-            Toast.makeText(this, "Nenhuma imagem selecionada", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -127,6 +117,7 @@ class DetectionChoiceActivity: AppCompatActivity() {
     private fun drawResult(objectName: String, results: List<Detection>, imageWidth: Int, imageHeight: Int){
         val allObjectList: ArrayList<DetectedObjectData> = arrayListOf()
         val requestedObjectList: ArrayList<DetectedObjectData> = arrayListOf()
+
         for((i, obj) in results.withIndex()) {
             for((j, category) in obj.categories.withIndex()){
                 if(category.label == objectName && category.score >= MIN_CONFIDENCE_ACCEPTANCE) {
@@ -147,6 +138,7 @@ class DetectionChoiceActivity: AppCompatActivity() {
                 )
             }
         }
+
         if (requestedObjectList.size > 1) {
             Intent(this, MultipleDetectedActivity::class.java).apply {
                 putParcelableArrayListExtra(EXTRA_REQUIRED_OBJECT_LIST, requestedObjectList)
