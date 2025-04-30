@@ -120,7 +120,9 @@ class DetectionChoiceActivity: AppCompatActivity() {
 
         for((i, obj) in results.withIndex()) {
             for((j, category) in obj.categories.withIndex()){
-                if(category.label == objectName && category.score >= MIN_CONFIDENCE_ACCEPTANCE) {
+                if(category.score < MIN_CONFIDENCE_ACCEPTANCE)
+                    continue
+                if(category.label == objectName) {
                     requestedObjectList.add(
                         DetectedObjectData(
                         category.score * 100,
