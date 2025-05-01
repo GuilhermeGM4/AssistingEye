@@ -3,11 +3,7 @@ package com.assistingeye.ui
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.assistingeye.R
 import com.assistingeye.databinding.ActivityDetectionResultBinding
 import com.assistingeye.model.Constants.EXTRA_ALL_OBJECTS_LIST
 import com.assistingeye.model.Constants.EXTRA_IMAGE_HEIGHT
@@ -18,6 +14,15 @@ import com.assistingeye.model.DetectedObjectData
 class DetectionResultActivity : AppCompatActivity() {
     private val adrb: ActivityDetectionResultBinding by lazy {
         ActivityDetectionResultBinding.inflate(layoutInflater)
+    }
+
+    private companion object{
+        const val TOP_EDGE = "top"
+        const val BOTTOM_EDGE = "bottom"
+        const val LEFT_EDGE = "left"
+        const val RIGHT_EDGE = "right"
+        const val VERY_CLOSE_PROXIMITY = 1
+        const val CLOSE_PROXIMITY = 4
     }
 
     private lateinit var requiredObject: DetectedObjectData
@@ -118,8 +123,57 @@ class DetectionResultActivity : AppCompatActivity() {
             message += " abaixo"
         if(obj.boundingBox.bottom < imageCenterY)
             message += " acima"
+
+        val imageEdgeProximity = calculateProximityToImageEdge(obj)
+        if(imageEdgeProximity != "")
+            message += imageEdgeProximity
+
         message += " da imagem."
         return message
+    }
+
+    private fun calculateProximityToImageEdge(obj: DetectedObjectData): String{
+        var proximity: String = ""
+        for(edge in arrayListOf<String>(TOP_EDGE, BOTTOM_EDGE, LEFT_EDGE, RIGHT_EDGE)){
+            var result: Float = 0f
+            if(edge == TOP_EDGE) {
+                result = (obj.boundingBox.top / imageHeight) * 100
+                proximity += if (result <= VERY_CLOSE_PROXIMITY){
+                    ", muito perto do topo"
+                }else if(result <= CLOSE_PROXIMITY){
+                    ", perto do topo"
+                }else continue
+                continue
+            }
+            if(edge == BOTTOM_EDGE) {
+                result = ((imageHeight - obj.boundingBox.bottom) / imageHeight) * 100
+                proximity += if (result <= VERY_CLOSE_PROXIMITY){
+                    ", muito perto da base"
+                }else if(result <= CLOSE_PROXIMITY){
+                    ", perto da base"
+                }else continue
+                continue
+            }
+            if(edge == LEFT_EDGE) {
+                result = (obj.boundingBox.left / imageWidth) * 100
+                proximity += if (result <= VERY_CLOSE_PROXIMITY){
+                    ", muito perto da borda esquerda"
+                }else if(result <= CLOSE_PROXIMITY){
+                    ", perto da borda esquerda"
+                }else continue
+                continue
+            }
+            if(edge == RIGHT_EDGE){
+                result = ((imageWidth - obj.boundingBox.right) / imageWidth) * 100
+                proximity += if (result <= VERY_CLOSE_PROXIMITY){
+                    ", muito perto da borda direita"
+                }else if(result <= CLOSE_PROXIMITY) {
+                    ", perto da borda direita"
+                }else continue
+                continue
+            }
+        }
+        return proximity
     }
 
     private fun debugCoordinates(imageCenterX: Float, imageCenterY: Float, obj: DetectedObjectData){
