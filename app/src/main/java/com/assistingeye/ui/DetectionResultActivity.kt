@@ -10,6 +10,7 @@ import com.assistingeye.model.Constants.EXTRA_IMAGE_HEIGHT
 import com.assistingeye.model.Constants.EXTRA_IMAGE_WIDTH
 import com.assistingeye.model.Constants.EXTRA_REQUIRED_OBJECT
 import com.assistingeye.model.DetectedObjectData
+import kotlin.math.abs
 
 class DetectionResultActivity : AppCompatActivity() {
     private val adrb: ActivityDetectionResultBinding by lazy {
@@ -72,34 +73,79 @@ class DetectionResultActivity : AppCompatActivity() {
         message += "Tenho ${requestedObject.confidence} de certeza que este item é um ${requestedObject.name}. "
 
         message += positionOnImage(requestedObject)
-
+        //TODO Check if one object might be on top of another
         for(obj in objectList){
+            var proximityMessage: String = ""
             message += "\nO objeto ${obj.name} está"
             Log.d("makePositioningMessage", "Object list: $objectList")
             if(obj.name != requestedObject.name){
                 if(obj.boundingBox.left > requestedObject.boundingBox.right || (
                             obj.boundingBox.left < requestedObject.boundingBox.right &&
                                     obj.boundingBox.right > requestedObject.boundingBox.right
-                            ))
+                            )) {
+                    if(obj.boundingBox.left >= requestedObject.boundingBox.right) {
+                        val proximity = calculateProximityToObjectEdge(
+                            obj.boundingBox.left,
+                            requestedObject.boundingBox.right,
+                            imageWidth
+                        )
+                        proximityMessage += if (proximity != "")
+                            " $proximity da direita"
+                        else ""
+                    }
                     message += " a direita"
+                }
                 else if (obj.boundingBox.right < requestedObject.boundingBox.left || (
                             obj.boundingBox.right > requestedObject.boundingBox.left &&
                                     obj.boundingBox.left < requestedObject.boundingBox.left
-                            ))
+                            )) {
+                    if(obj.boundingBox.right <= requestedObject.boundingBox.left) {
+                        val proximity = calculateProximityToObjectEdge(
+                            obj.boundingBox.left,
+                            requestedObject.boundingBox.right,
+                            imageWidth
+                        )
+                        proximityMessage += if (proximity != "")
+                            " $proximity da esquerda"
+                        else ""
+                    }
                     message += " a esquerda"
+                }
 
                 if (obj.boundingBox.top > requestedObject.boundingBox.bottom || (
                             obj.boundingBox.top < requestedObject.boundingBox.bottom &&
                                     obj.boundingBox.bottom > requestedObject.boundingBox.bottom
-                            ))
+                            )) {
+                    if(obj.boundingBox.top >= requestedObject.boundingBox.bottom) {
+                        val proximity = calculateProximityToObjectEdge(
+                            obj.boundingBox.left,
+                            requestedObject.boundingBox.right,
+                            imageWidth
+                        )
+                        proximityMessage += if (proximity != "")
+                            " $proximity da base"
+                        else ""
+                    }
                     message += " abaixo"
+                }
                 if (obj.boundingBox.bottom < requestedObject.boundingBox.top || (
                             obj.boundingBox.bottom > requestedObject.boundingBox.top &&
                                     obj.boundingBox.top < requestedObject.boundingBox.top
-                            ))
+                            )) {
+                    if(obj.boundingBox.bottom <= requestedObject.boundingBox.top) {
+                        val proximity = calculateProximityToObjectEdge(
+                            obj.boundingBox.left,
+                            requestedObject.boundingBox.right,
+                            imageWidth
+                        )
+                        proximityMessage += if (proximity != "")
+                            " $proximity acima"
+                        else ""
+                    }
                     message += " acima"
+                }
             }
-            message += " do objeto ${requestedObject.name} \n"
+            message += proximityMessage + " do objeto ${requestedObject.name} \n"
         }
 
         return message
@@ -173,6 +219,17 @@ class DetectionResultActivity : AppCompatActivity() {
                 continue
             }
         }
+        return proximity
+    }
+
+    private fun calculateProximityToObjectEdge(firstEdge: Float, secondEdge: Float, imageSize: Int): String{
+        var proximity: String = ""
+        var result: Float = (abs(firstEdge - secondEdge) / imageSize) * 100
+        proximity += if (result <= VERY_CLOSE_PROXIMITY){
+            " muito perto"
+        }else if(result <= CLOSE_PROXIMITY){
+            " perto"
+        }else ""
         return proximity
     }
 
