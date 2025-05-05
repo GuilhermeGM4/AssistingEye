@@ -76,7 +76,7 @@ class DetectionResultActivity : AppCompatActivity() {
         //TODO Check if one object might be on top of another
         for(obj in objectList){
             if(obj == requestedObject) continue
-            
+
             var proximityMessage: String = ""
             message += "\nO objeto ${obj.name} está"
             Log.d("makePositioningMessage", "Object list: $objectList")
@@ -146,6 +146,16 @@ class DetectionResultActivity : AppCompatActivity() {
                 }
                 message += " acima"
             }
+            if(requestedObject.boundingBox.centerX() < obj.boundingBox.right &&
+                requestedObject.boundingBox.centerX() > obj.boundingBox.left &&
+                requestedObject.boundingBox.centerY() < obj.boundingBox.bottom &&
+                requestedObject.boundingBox.centerY() > obj.boundingBox.top)
+                message += " no centro"
+            else if(requestedObject.boundingBox.right > obj.boundingBox.right &&
+                requestedObject.boundingBox.left < obj.boundingBox.left &&
+                requestedObject.boundingBox.top < obj.boundingBox.top &&
+                requestedObject.boundingBox.bottom > obj.boundingBox.bottom)
+                message += " junto"
 
             message += proximityMessage + " do objeto ${requestedObject.name} \n"
         }
@@ -161,7 +171,7 @@ class DetectionResultActivity : AppCompatActivity() {
         var message: String = "O objeto está"
 
         if(obj.boundingBox.left < imageCenterX && obj.boundingBox.right > imageCenterX &&
-            obj.boundingBox.top > imageCenterY && obj.boundingBox.bottom < imageCenterY)
+            obj.boundingBox.top < imageCenterY && obj.boundingBox.bottom > imageCenterY)
             return " no centro da imagem"
         if(obj.boundingBox.right > imageCenterX)
             message += " a direita"
